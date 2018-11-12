@@ -1,0 +1,50 @@
+AppBundle\Entity\Produit:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: designation
+    properties:
+        designation:
+            - NotBlank: ~
+            - Type: string
+        code:
+            - NotBlank: ~
+            - Type: string
+        quantite:
+            - NotBlank: ~
+            - Type: integer
+        prixachat:
+            - NotBlank: ~
+            - Type: integer
+        prixvente:
+            - NotBlank: ~
+            - Type: integer
+
+
+
+AppBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        firstName:
+            - NotBlank: ~
+            - Type: string
+        lastName:
+            - NotBlank: ~
+            - Type: string
+        email:
+            - NotBlank: ~
+            - Email: ~            
+        password:
+            - NotBlank: ~
+            - type: string   
+
+
+AppBundle\Entity\Commande:
+    properties:
+        type:
+            - NotNull: ~
+            - Choice:
+                choices: [less_than_12, for_all]
+        isValid:
+            - NotBlank: ~
+            - type: boolean
+         
