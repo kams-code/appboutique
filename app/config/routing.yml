@@ -1,22 +1,15 @@
-app_commande:
-    resource: "@AppBundle/Controller/CommandeController.php"
-    type:     annotation
-
-app_commande:
-    resource: "@AppBundle/Controller/CommandeController.php"
-    type:     annotation
-
 app:
     resource: '@AppBundle/Controller/DefaultController.php'
     type: annotation
 
-users:
-    type:     rest
-    resource: AppBundle\Controller\UserController
-produits:
-    type:     rest
-    resource: AppBundle\Controller\ProduitController
+api:
+    type: rest
+    resource: "routing_api.yml"
+    prefix: /api
 
+#commandes:
+    #type:     rest
+    #resource: AppBundle/Controller/CommandeController
 
 
 

@@ -18,7 +18,7 @@ class UserController extends Controller
      * @Rest\View()
      * @Rest\Get("/users")
      */
-    public function indexAction(Request $request)
+    public function indexUserAction(Request $request)
     {
         /*$em = $this->getDoctrine()->getManager();
 
@@ -52,7 +52,7 @@ class UserController extends Controller
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/users")
      */
-    public function newAction(Request $request)
+    public function newUserAction(Request $request)
     {
         /*$user = new User();
         $form = $this->createForm('AppBundle\Form\UserType', $user);
@@ -90,7 +90,7 @@ class UserController extends Controller
      * @Rest\View()
      * @Rest\Get("/users/{user_id}")
      */
-    public function showAction(Request $request)
+    public function showUserAction(Request $request)
     {
        /* $deleteForm = $this->createDeleteForm($user);
 
@@ -119,10 +119,13 @@ class UserController extends Controller
             return new JsonResponse($formatted);*/
     }
 
-    
-    public function editAction(Request $request, User $user)
+     /**
+     * @Rest\View()
+     * @Rest\Put("/users/{id}")
+     */
+    public function editUserAction(Request $request, User $user)
     {
-        $deleteForm = $this->createDeleteForm($user);
+       /* $deleteForm = $this->createDeleteForm($user);
         $editForm = $this->createForm('AppBundle\Form\UserType', $user);
         $editForm->handleRequest($request);
 
@@ -136,14 +139,38 @@ class UserController extends Controller
             'user' => $user,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
-        ));
+        ));*/
+
+        $user = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:User')
+                ->find($request->get('id')); // L'identifiant en tant que paramètre n'est plus nécessaire
+        /* @var $user User */
+
+        if (empty($user)) {
+            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+
+       //$form = $this->createForm(UserType::class, $user);
+   
+        $form->submit($request->request->all());
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            // l'entité vient de la base, donc le merge n'est pas nécessaire.
+            // il est utilisé juste par soucis de clarté
+            $em->merge($user);
+            $em->flush();
+            return $user;
+        } else {
+            return $form;
+        }
     }
 
     /**
      * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
      * @Rest\Delete("/users/{id}")
      */
-    public function deleteAction(Request $request, User $user)
+    public function deleteUseraAction(Request $request, User $user)
     {
         $em = $this->get('doctrine.orm.entity_manager');
         $user = $em->getRepository('AppBundle:User')

@@ -1,0 +1,7 @@
+users:
+    type:     rest
+    resource: AppBundle\Controller\UserController
+
+produits:
+    type:     rest
+    resource: AppBundle\Controller\ProduitController

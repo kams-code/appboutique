@@ -1,6 +1,6 @@
 AppBundle\Entity\Produit:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: designation
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
     properties:
         designation:
             - NotBlank: ~
