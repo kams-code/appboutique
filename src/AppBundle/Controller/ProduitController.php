@@ -162,10 +162,7 @@ class ProduitController extends Controller
     }
 
    
-     /**
-     * @Rest\View()
-     * @Rest\Put("/produits/{id}")
-     */
+   
     public function editAction(Request $request)
     {
         /*$deleteForm = $this->createDeleteForm($produit);
@@ -208,7 +205,7 @@ class ProduitController extends Controller
             return $form;
         }
 
-            }
+    }
 
         
             /**
@@ -239,6 +236,80 @@ class ProduitController extends Controller
                     $em->flush();
                 }
             }
+
+     
+    public function patchProduit1Action(Request $request)
+    {
+        $place = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Produit')
+                ->find($request->get('id')); // L'identifiant en tant que paramètre n'est plus nécessaire
+        /* @var $place Place */
+
+        if (empty($produit)) {
+            return new JsonResponse(['message' => 'Place not found'], Response::HTTP_NOT_FOUND);
+        }
+
+         //$form = $this->createForm(PlaceType::class, $place);
+         $form = $this->createForm('AppBundle\Form\ProduitType', $produit); 
+         // Le paramètre false dit à Symfony de garder les valeurs dans notre 
+         // entité si l'utilisateur n'en fournit pas une dans sa requête
+        $form->submit($request->request->all(), false);
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            // l'entité vient de la base, donc le merge n'est pas nécessaire.
+            // il est utilisé juste par soucis de clarté
+            $em->merge($produit);
+            $em->flush();
+            return $produit;
+        } else {
+            return $form;
+        }
+    }
+     /**
+     * @Rest\View()
+     * @Rest\Put("/produits/{id}")
+     */
+    public function updateProduitAction(Request $request)
+    {
+        return $this->updateProduit($request, true);
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Patch("/produits/{id}")
+     */
+    public function patchProduitAction(Request $request)
+    {
+        return $this->updateProduit($request, false);
+    }
+
+    private function updateProduit(Request $request, $clearMissing)
+    {
+        $produit = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Produit')
+                ->find($request->get('id')); // L'identifiant en tant que paramètre n'est plus nécessaire
+        /* @var $place Place */
+
+        if (empty($produit)) {
+            return new JsonResponse(['message' => 'Produit not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        //$form = $this->createForm(PlaceType::class, $place);
+        $form = $this->createForm('AppBundle\Form\ProduitType', $produit); 
+        // Le paramètre false dit à Symfony de garder les valeurs dans notre
+        // entité si l'utilisateur n'en fournit pas une dans sa requête
+        $form->submit($request->request->all(), $clearMissing);
+
+        if ($form->isValid()) {
+            $em = $this->get('doctrine.orm.entity_manager');
+            $em->persist($produit);
+            $em->flush();
+            return $produit;
+        } else {
+            return $form;
+        }
+    }
 
             /**
              * Creates a form to delete a produit entity.
